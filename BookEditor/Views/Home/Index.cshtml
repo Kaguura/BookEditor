@@ -1,0 +1,155 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/script")
+
+<div class="body-content">
+    <div class="row">
+        <div class="col-lg-3">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    @for (int i = 1; i <= ViewBag.PageCount; i++)
+                    {
+                        if (ViewBag.Page == i)
+                        {
+                            <li class="active"><a href=@Url.Action("Index", "Home", new { page = i })>@i</a></li>
+                        }
+                        else
+                        {
+                            <li><a href=@Url.Action("Index", "Home", new { page = i })>@i</a></li>
+                        }
+                    }
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3" style="margin-left: -15px;">
+            <form action=@Url.Action("Search", "Home" ) method="POST" class="navbar-form navbar-search" role="search">
+                <div class="input-group">
+
+                    <input name ="text" type="text" class="form-control">
+                    <input type="hidden" name="page" value="@ViewBag.Page" />
+
+                    <div class="input-group-btn">
+                        <button type="submit" class="btn btn-search btn-info">
+                            <span class="glyphicon glyphicon-search"></span>
+                            <span class="label-icon">Search</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-lg-offset-6">
+            @if(ViewBag.Search == 1)
+            {
+                <p>Search results:</p>
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <table>
+                <tr><td>Title</td><td>Author</td><td>Genre</td><td></td><td></td></tr>
+                @for (int i = 0; i < ViewBag.Books.Count; i++)
+                {
+                    <tr>
+                        <td>@ViewBag.Books[i].Title</td>
+                        <td>@ViewBag.Books[i].Author</td>
+                        <td>@ViewBag.Books[i].Genre</td>
+                        <td><button type="button" class="ShowBtn" value="@i" data-title="@ViewBag.Books[i].Title" data-author="@ViewBag.Books[i].Author" data-genre="@ViewBag.Books[i].Genre"><img src="~/Images/edit.png" width="20" height="20" alt="edit"></button></td>
+                        <td>
+                            <form action=@Url.Action("Delete", "Home") method="POST" class="delete-form">
+                                <input type="hidden" name="title" value="@ViewBag.Books[i].Title" />
+                                <input type="hidden" name="author" value="@ViewBag.Books[i].Author" />
+                                <input type="hidden" name="genre" value="@ViewBag.Books[i].Genre" />
+                                <button type="submit" value="Delete"><img src="~/Images/delete.png" width="20" height="20" alt="delete"></button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+        <div class="col-lg-6">
+            @if(ViewBag.Search == 1 && ViewBag.FoundBooks.Count != 0)
+            { 
+            <table>
+                <tr><td>Title</td><td>Author</td><td>Genre</td></tr>
+                @for (int i = 0; i < ViewBag.FoundBooks.Count; i++)
+                {
+                    <tr>
+                        <td>@ViewBag.FoundBooks[i].Title</td>
+                        <td>@ViewBag.FoundBooks[i].Author</td>
+                        <td>@ViewBag.FoundBooks[i].Genre</td>
+                    </tr>
+                }
+            </table>
+            }
+            @if (ViewBag.Search == 1 && ViewBag.FoundBooks.Count == 0)
+            {
+                <p>No such book found!</p>
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3">
+            <button type="button" class="ShowBtn" value="-1">Add a book</button>
+        </div>
+    </div>
+    <div class="modal fade" id="ModalZK" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span><span class="sr-only"></span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel4" style="text-align:center "></h4>
+                </div>
+                <div class="modal-body">
+                    <form action=@Url.Action("AddOrEdit", "Home" ) method="POST">
+                        <input type="hidden" name="old.Title" value="" />
+                        <input type="hidden" name="old.Author" value="" />
+                        <input type="hidden" name="old.Genre" value="" />
+                        <table>
+                            <tr>
+                                <td>
+                                    <p>Title</p>
+                                </td>
+                                <td>
+                                    <input type="text" name="title" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>Author</p>
+                                </td>
+                                <td>
+                                    <input type="text" name="author" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>Genre</p>
+                                </td>
+                                <td>
+                                    <input type="text" name="genre" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input name="submit" type="submit" />
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
